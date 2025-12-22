@@ -2,6 +2,6 @@
   "cleanUrls": true,
   "framework": null,
   "rewrites": [
-    { "source": "/(.*)", "destination": "/demojtg.html" }
+    { "source": "/(.*)", "destination": "/index.html" }
   ]
 }
