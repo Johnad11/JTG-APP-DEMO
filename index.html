@@ -65,8 +65,6 @@
         @keyframes popIn { 0% { opacity: 0; transform: scale(0.99); } 100% { opacity: 1; transform: scale(1); } }
         .animate-pop { animation: popIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
         input[type=number]::-webkit-inner-spin-button, input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
-        
-        /* Modal Styles */
         .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(10, 14, 41, 0.9); z-index: 50; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(5px); }
         .modal-content { background: #111633; border: 1px solid #162C99; border-radius: 16px; width: 90%; max-width: 500px; padding: 24px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); animation: popIn 0.3s ease-out; }
     </style>
@@ -120,26 +118,10 @@
             forex: { label: 'Forex', pairs: ['AUDCAD', 'AUDCHF', 'AUDJPY', 'AUDNZD', 'AUDUSD', 'CADCHF', 'CADJPY', 'CHFJPY', 'EURAUD', 'EURCAD', 'EURCHF', 'EURGBP', 'EURJPY', 'EURNZD', 'EURUSD', 'GBPAUD', 'GBPCAD', 'GBPCHF', 'GBPJPY', 'GBPNZD', 'GBPUSD', 'NZDCAD', 'NZDCHF', 'NZDJPY', 'NZDUSD', 'USDCAD', 'USDCHF', 'USDJPY', 'USDMXN', 'USDZAR'], contract: 100000 }
         };
 
-        const JtgPromo = () => (
-            <div className="bg-gradient-to-r from-jtg-blue/40 to-jtg-card border border-jtg-blue/30 rounded-2xl p-6 lg:p-8 mt-8 mb-8 relative overflow-hidden group hover:border-jtg-green/30 transition-colors duration-500 w-full shrink-0">
-                <div className="absolute top-0 right-0 w-40 h-40 bg-jtg-green/5 rounded-full blur-3xl -mr-10 -mt-10 transition-opacity group-hover:opacity-100 opacity-50"></div>
-                <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-6">
-                    <div className="text-center md:text-left">
-                        <h3 className="text-xl font-bold text-white mb-2 tracking-wide">Scale Your Capital with JTG</h3>
-                        <p className="text-slate-400 text-sm leading-relaxed font-light max-w-md">
-                            Stop gambling. Use our data-driven strategies to pass your Prop Firm challenges consistently.
-                        </p>
-                    </div>
-                    <button onClick={() => window.location.href = 'https://johnadtradersgroup.vercel.app/'} className="text-sm font-bold text-jtg-green bg-jtg-green/10 px-6 py-3 rounded-full hover:bg-jtg-green hover:text-white flex items-center gap-2 transition-all uppercase tracking-wider whitespace-nowrap shadow-lg border border-jtg-green/20">Visit JTG Website <Icons.ArrowRight /></button>
-                </div>
-            </div>
-        );
-
-        // --- NEW: PROFILE MANAGER ---
-        const ProfileManager = ({ profiles, activeProfileId, onSwitch, onAdd }) => {
+        // --- PROFILE MANAGER ---
+        const ProfileManager = ({ profiles, activeProfileId, onSwitch, onAdd, mobile }) => {
             const [showModal, setShowModal] = useState(false);
             const [newProfile, setNewProfile] = useState({ name: '', type: 'PERSONAL', balance: 1000, dailyLoss: 5, maxLoss: 10, profitTarget: 8 });
-
             const activeProfile = profiles.find(p => p.id === activeProfileId) || profiles[0];
 
             const handleSubmit = (e) => {
@@ -150,28 +132,23 @@
             };
 
             return (
-                <div className="w-full px-4 mb-6">
+                <div className={`px-4 mb-6 ${mobile ? 'w-auto p-0 mb-0' : 'w-full'}`}>
                     <div className="relative">
-                        <button onClick={() => setShowModal(true)} className="w-full flex items-center justify-between bg-jtg-card border border-jtg-blue/30 rounded-xl p-3 text-left hover:border-jtg-green/50 transition-colors group">
+                        <button onClick={() => setShowModal(true)} className={`flex items-center justify-between bg-jtg-card border border-jtg-blue/30 rounded-xl p-3 text-left hover:border-jtg-green/50 transition-colors group ${mobile ? 'w-auto px-4 py-2 text-xs' : 'w-full'}`}>
                             <div className="flex items-center gap-3">
-                                <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${activeProfile.type === 'CHALLENGE' ? 'bg-jtg-blue/20 text-jtg-green' : 'bg-slate-700 text-slate-300'}`}>
-                                    {activeProfile.type === 'CHALLENGE' ? <Icons.Trophy2 /> : <Icons.Briefcase />}
-                                </div>
+                                {!mobile && <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${activeProfile.type === 'CHALLENGE' ? 'bg-jtg-blue/20 text-jtg-green' : 'bg-slate-700 text-slate-300'}`}>{activeProfile.type === 'CHALLENGE' ? <Icons.Trophy2 /> : <Icons.Briefcase />}</div>}
                                 <div className="overflow-hidden">
-                                    <p className="text-xs text-slate-400 font-bold uppercase tracking-wider">{activeProfile.type === 'CHALLENGE' ? 'Challenge' : 'Personal'}</p>
-                                    <p className="text-sm font-bold text-white truncate">{activeProfile.name}</p>
+                                    {!mobile && <p className="text-xs text-slate-400 font-bold uppercase tracking-wider">{activeProfile.type === 'CHALLENGE' ? 'Challenge' : 'Personal'}</p>}
+                                    <p className={`${mobile ? 'text-xs' : 'text-sm'} font-bold text-white truncate`}>{activeProfile.name}</p>
                                 </div>
                             </div>
                             <Icons.ChevronDown />
                         </button>
-
-                        {/* PROFILE SWITCHER DROPDOWN / MODAL */}
                         {showModal && (
                             <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
                                 <div className="bg-jtg-card border border-jtg-blue/50 rounded-2xl p-6 w-full max-w-md shadow-2xl relative">
                                     <button onClick={() => setShowModal(false)} className="absolute top-4 right-4 text-slate-500 hover:text-white">✕</button>
                                     <h3 className="text-xl font-bold text-white mb-4">Select Workspace</h3>
-                                    
                                     <div className="space-y-2 mb-6 max-h-40 overflow-y-auto custom-scroll">
                                         {profiles.map(p => (
                                             <button key={p.id} onClick={() => { onSwitch(p.id); setShowModal(false); }} className={`w-full flex items-center justify-between p-3 rounded-xl border transition-all ${p.id === activeProfileId ? 'bg-jtg-blue/20 border-jtg-green/50 text-white' : 'bg-jtg-input border-transparent text-slate-400 hover:text-white'}`}>
@@ -180,19 +157,14 @@
                                             </button>
                                         ))}
                                     </div>
-
                                     <div className="border-t border-slate-700 pt-4">
                                         <h4 className="text-sm font-bold text-jtg-green mb-3 uppercase tracking-wide">Create New Profile</h4>
                                         <form onSubmit={handleSubmit} className="space-y-3">
                                             <input type="text" placeholder="Profile Name (e.g. FundedNext 100k)" value={newProfile.name} onChange={e => setNewProfile({...newProfile, name: e.target.value})} className="w-full bg-jtg-input border border-jtg-blue/30 rounded-lg p-2 text-white text-sm outline-none" required />
                                             <div className="grid grid-cols-2 gap-2">
-                                                <select value={newProfile.type} onChange={e => setNewProfile({...newProfile, type: e.target.value})} className="bg-jtg-input border border-jtg-blue/30 rounded-lg p-2 text-white text-sm outline-none">
-                                                    <option value="PERSONAL">Personal Account</option>
-                                                    <option value="CHALLENGE">Prop Firm Challenge</option>
-                                                </select>
+                                                <select value={newProfile.type} onChange={e => setNewProfile({...newProfile, type: e.target.value})} className="bg-jtg-input border border-jtg-blue/30 rounded-lg p-2 text-white text-sm outline-none"><option value="PERSONAL">Personal Account</option><option value="CHALLENGE">Prop Firm Challenge</option></select>
                                                 <input type="number" placeholder="Balance" value={newProfile.balance} onChange={e => setNewProfile({...newProfile, balance: e.target.value})} className="bg-jtg-input border border-jtg-blue/30 rounded-lg p-2 text-white text-sm outline-none" required />
                                             </div>
-                                            
                                             {newProfile.type === 'CHALLENGE' && (
                                                 <div className="grid grid-cols-3 gap-2 bg-jtg-blue/10 p-2 rounded-lg border border-jtg-blue/20">
                                                     <div><label className="text-[9px] text-slate-400 uppercase block">Daily Loss %</label><input type="number" value={newProfile.dailyLoss} onChange={e => setNewProfile({...newProfile, dailyLoss: e.target.value})} className="w-full bg-transparent border-b border-slate-600 text-white text-xs py-1 outline-none" /></div>
@@ -200,7 +172,6 @@
                                                     <div><label className="text-[9px] text-slate-400 uppercase block">Target %</label><input type="number" value={newProfile.profitTarget} onChange={e => setNewProfile({...newProfile, profitTarget: e.target.value})} className="w-full bg-transparent border-b border-slate-600 text-white text-xs py-1 outline-none" /></div>
                                                 </div>
                                             )}
-
                                             <button type="submit" className="w-full bg-jtg-green hover:bg-emerald-600 text-white font-bold py-2 rounded-lg text-sm transition-colors mt-2">Create Profile</button>
                                         </form>
                                     </div>
@@ -212,58 +183,39 @@
             );
         };
 
-        // --- CHALLENGE STATUS COMPONENT ---
+        // --- CHALLENGE STATUS ---
         const ChallengeStatus = ({ profile, trades }) => {
             if (!profile || profile.type !== 'CHALLENGE') return null;
-
-            // Normalize rules (handle flat vs nested structure)
             const rules = profile.rules || profile; 
             const dailyLossPct = parseFloat(rules.dailyLoss || 0);
             const maxLossPct = parseFloat(rules.maxLoss || 0);
             const profitTargetPct = parseFloat(rules.profitTarget || 0);
-
-            // Simple Logic: Daily loss is sum of losses today. Max loss is net PnL (if negative).
-            // Note: This is an approximation based on closed trades.
             const today = new Date().toISOString().split('T')[0];
             const todaysTrades = trades.filter(t => t.closeDate && t.closeDate.startsWith(today));
             const dailyLossAmt = Math.abs(todaysTrades.reduce((acc, t) => parseFloat(t.pnl) < 0 ? acc + parseFloat(t.pnl) : acc, 0));
             const totalPnL = trades.reduce((acc, t) => acc + parseFloat(t.pnl), 0);
-            
             const startBal = parseFloat(profile.balance);
             const dailyLimit = startBal * (dailyLossPct / 100);
             const maxLimit = startBal * (maxLossPct / 100);
             const profitTarget = startBal * (profitTargetPct / 100);
-
             const dailyProgress = dailyLimit > 0 ? Math.min((dailyLossAmt / dailyLimit) * 100, 100) : 0;
             const maxProgress = (totalPnL < 0 && maxLimit > 0) ? Math.min((Math.abs(totalPnL) / maxLimit) * 100, 100) : 0;
             const targetProgress = (totalPnL > 0 && profitTarget > 0) ? Math.min((totalPnL / profitTarget) * 100, 100) : 0;
 
             return (
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-                    <div className="bg-jtg-card border border-jtg-blue/30 rounded-xl p-4 relative overflow-hidden">
-                        <div className="flex justify-between text-xs font-bold uppercase text-slate-400 mb-1"><span>Daily Loss</span><span>{dailyLossAmt.toFixed(0)} / {dailyLimit.toFixed(0)}</span></div>
-                        <div className="w-full h-2 bg-slate-800 rounded-full overflow-hidden"><div className={`h-full ${dailyProgress > 80 ? 'bg-red-500' : 'bg-jtg-blue'}`} style={{width: `${dailyProgress}%`}}></div></div>
-                    </div>
-                    <div className="bg-jtg-card border border-jtg-blue/30 rounded-xl p-4 relative overflow-hidden">
-                        <div className="flex justify-between text-xs font-bold uppercase text-slate-400 mb-1"><span>Max Drawdown</span><span>{Math.abs(Math.min(totalPnL, 0)).toFixed(0)} / {maxLimit.toFixed(0)}</span></div>
-                        <div className="w-full h-2 bg-slate-800 rounded-full overflow-hidden"><div className={`h-full ${maxProgress > 80 ? 'bg-red-500' : 'bg-purple-500'}`} style={{width: `${maxProgress}%`}}></div></div>
-                    </div>
-                    <div className="bg-jtg-card border border-jtg-blue/30 rounded-xl p-4 relative overflow-hidden">
-                        <div className="flex justify-between text-xs font-bold uppercase text-slate-400 mb-1"><span>Profit Target</span><span>{Math.max(totalPnL, 0).toFixed(0)} / {profitTarget.toFixed(0)}</span></div>
-                        <div className="w-full h-2 bg-slate-800 rounded-full overflow-hidden"><div className="h-full bg-jtg-green" style={{width: `${targetProgress}%`}}></div></div>
-                    </div>
+                    <div className="bg-jtg-card border border-jtg-blue/30 rounded-xl p-4 relative overflow-hidden"><div className="flex justify-between text-xs font-bold uppercase text-slate-400 mb-1"><span>Daily Loss</span><span>{dailyLossAmt.toFixed(0)} / {dailyLimit.toFixed(0)}</span></div><div className="w-full h-2 bg-slate-800 rounded-full overflow-hidden"><div className={`h-full ${dailyProgress > 80 ? 'bg-red-500' : 'bg-jtg-blue'}`} style={{width: `${dailyProgress}%`}}></div></div></div>
+                    <div className="bg-jtg-card border border-jtg-blue/30 rounded-xl p-4 relative overflow-hidden"><div className="flex justify-between text-xs font-bold uppercase text-slate-400 mb-1"><span>Max Drawdown</span><span>{Math.abs(Math.min(totalPnL, 0)).toFixed(0)} / {maxLimit.toFixed(0)}</span></div><div className="w-full h-2 bg-slate-800 rounded-full overflow-hidden"><div className={`h-full ${maxProgress > 80 ? 'bg-red-500' : 'bg-purple-500'}`} style={{width: `${maxProgress}%`}}></div></div></div>
+                    <div className="bg-jtg-card border border-jtg-blue/30 rounded-xl p-4 relative overflow-hidden"><div className="flex justify-between text-xs font-bold uppercase text-slate-400 mb-1"><span>Profit Target</span><span>{Math.max(totalPnL, 0).toFixed(0)} / {profitTarget.toFixed(0)}</span></div><div className="w-full h-2 bg-slate-800 rounded-full overflow-hidden"><div className="h-full bg-jtg-green" style={{width: `${targetProgress}%`}}></div></div></div>
                 </div>
             );
         };
 
-
-        // --- MAIN COMPONENTS (Updated with Profile Logic) ---
+        // --- MAIN COMPONENTS ---
 
         const Calculator = ({ currentBalance }) => {
             const [balance, setBalance] = useState(currentBalance); 
-            // Update local balance when prop changes
             useEffect(() => { setBalance(currentBalance); }, [currentBalance]);
-
             const [riskMode, setRiskMode] = useState('percent'); 
             const [riskValue, setRiskValue] = useState(1.0); 
             const [assetClass, setAssetClass] = useState('indices'); 
@@ -272,65 +224,29 @@
             const [stopLoss, setStopLoss] = useState('');
             const [takeProfit, setTakeProfit] = useState(''); 
             const [result, setResult] = useState(null);
-
             useEffect(() => { setPair(ASSETS[assetClass].pairs[0]); setResult(null); }, [assetClass]);
-
             const calculate = () => {
                 if(!entryPrice || !stopLoss || !balance) return;
                 const riskDollars = riskMode === 'percent' ? balance * (riskValue / 100) : parseFloat(riskValue);
-                const entry = parseFloat(entryPrice);
-                const sl = parseFloat(stopLoss);
-                const tp = takeProfit ? parseFloat(takeProfit) : null;
-                const dist = Math.abs(entry - sl);
-                
+                const entry = parseFloat(entryPrice); const sl = parseFloat(stopLoss); const tp = takeProfit ? parseFloat(takeProfit) : null; const dist = Math.abs(entry - sl);
                 let contractSize = 1;
-                if(pair.includes('XAU')) contractSize = 100;
-                else if(pair.includes('XAG')) contractSize = 5000;
-                else if(assetClass === 'forex') contractSize = 100000;
-                
-                let lot = 0;
-                if(pair.includes('JPY') && assetClass === 'forex') lot = riskDollars / (dist * 100 * 6.8);
-                else lot = riskDollars / (dist * contractSize);
-                
+                if(pair.includes('XAU')) contractSize = 100; else if(pair.includes('XAG')) contractSize = 5000; else if(assetClass === 'forex') contractSize = 100000;
+                let lot = 0; if(pair.includes('JPY') && assetClass === 'forex') lot = riskDollars / (dist * 100 * 6.8); else lot = riskDollars / (dist * contractSize);
                 let profit = null; let rr = null;
-                if(tp) {
-                    const reward = Math.abs(tp - entry);
-                    rr = (reward / dist).toFixed(2);
-                    profit = (riskDollars * (reward/dist)).toFixed(2);
-                }
+                if(tp) { const reward = Math.abs(tp - entry); rr = (reward / dist).toFixed(2); profit = (riskDollars * (reward/dist)).toFixed(2); }
                 setResult({ lot: lot.toFixed(2), risk: riskDollars.toFixed(2), rr: rr, profit: profit });
             };
-
-            useEffect(() => {
-                if(entryPrice && stopLoss && balance) {
-                    const t = setTimeout(calculate, 300);
-                    return () => clearTimeout(t);
-                }
-            }, [balance, riskMode, riskValue, entryPrice, stopLoss, takeProfit, pair]);
-
+            useEffect(() => { if(entryPrice && stopLoss && balance) { const t = setTimeout(calculate, 300); return () => clearTimeout(t); } }, [balance, riskMode, riskValue, entryPrice, stopLoss, takeProfit, pair]);
             return (
                 <div className="flex flex-col h-full overflow-y-auto custom-scroll p-4 md:p-10 pb-24 md:pb-10">
                     <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 animate-pop mb-auto">
                         <div className="lg:col-span-7 space-y-8">
                             <div className="flex gap-2 p-1.5 bg-jtg-input rounded-xl overflow-x-auto shadow-inner border border-jtg-blue/30 no-scrollbar">
-                                {Object.keys(ASSETS).map(key => (
-                                    <button key={key} onClick={() => setAssetClass(key)} 
-                                        className={`flex-1 py-3 px-4 rounded-lg text-xs font-bold uppercase tracking-widest transition-all whitespace-nowrap ${assetClass === key ? 'bg-gradient-to-r from-jtg-blue to-blue-700 text-white shadow-lg' : 'text-slate-400 hover:text-white'}`}>
-                                        {ASSETS[key].label}
-                                    </button>
-                                ))}
+                                {Object.keys(ASSETS).map(key => ( <button key={key} onClick={() => setAssetClass(key)} className={`flex-1 py-3 px-4 rounded-lg text-xs font-bold uppercase tracking-widest transition-all whitespace-nowrap ${assetClass === key ? 'bg-gradient-to-r from-jtg-blue to-blue-700 text-white shadow-lg' : 'text-slate-400 hover:text-white'}`}>{ASSETS[key].label}</button> ))}
                             </div>
                             <div className="bg-jtg-card border border-jtg-blue/30 rounded-2xl p-8 shadow-2xl relative overflow-hidden">
                                 <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-jtg-green to-jtg-blue"></div>
-                                <div className="mb-8">
-                                    <label className="text-xs font-bold text-slate-400 uppercase mb-3 block tracking-wider">Instrument</label>
-                                    <div className="relative">
-                                        <select value={pair} onChange={(e) => setPair(e.target.value)} className="w-full bg-jtg-input border border-jtg-blue/40 text-white text-lg font-medium rounded-xl p-4 pr-10 focus:ring-2 focus:ring-jtg-green/50 outline-none appearance-none">
-                                            {ASSETS[assetClass].pairs.map(p => <option key={p} value={p}>{p}</option>)}
-                                        </select>
-                                        <div className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 pointer-events-none"><Icons.ChevronDown /></div>
-                                    </div>
-                                </div>
+                                <div className="mb-8"><label className="text-xs font-bold text-slate-400 uppercase mb-3 block tracking-wider">Instrument</label><div className="relative"><select value={pair} onChange={(e) => setPair(e.target.value)} className="w-full bg-jtg-input border border-jtg-blue/40 text-white text-lg font-medium rounded-xl p-4 pr-10 focus:ring-2 focus:ring-jtg-green/50 outline-none appearance-none">{ASSETS[assetClass].pairs.map(p => <option key={p} value={p}>{p}</option>)}</select><div className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 pointer-events-none"><Icons.ChevronDown /></div></div></div>
                                 <div className="grid grid-cols-2 gap-6 mb-8">
                                     <div><label className="text-xs font-bold text-slate-400 uppercase mb-3 block">Balance</label><input type="number" value={balance} onChange={(e) => setBalance(e.target.value)} className="w-full bg-jtg-input border border-jtg-blue/40 rounded-xl p-4 text-white font-mono text-lg font-medium focus:ring-2 focus:ring-jtg-green/50 outline-none" /></div>
                                     <div><label className="text-xs font-bold text-slate-400 uppercase mb-3 block">Risk</label><div className="flex bg-jtg-input border border-jtg-blue/40 rounded-xl overflow-hidden"><input type="number" value={riskValue} onChange={(e) => setRiskValue(e.target.value)} className="w-full bg-transparent p-4 text-white font-mono text-lg font-medium outline-none z-10" /><button onClick={() => setRiskMode(riskMode === 'percent' ? 'usd' : 'percent')} className="bg-jtg-blue/20 border-l border-jtg-blue/40 px-6 text-sm font-bold text-jtg-green hover:bg-jtg-blue/40 transition">{riskMode === 'percent' ? '%' : '$'}</button></div></div>
@@ -364,7 +280,6 @@
                             </div>
                         </div>
                     </div>
-                    <JtgPromo />
                 </div>
             );
         };
@@ -389,7 +304,6 @@
                             <button type="submit" className="w-full bg-jtg-green hover:bg-emerald-600 text-white font-bold py-4 rounded-lg mt-6 transition-colors flex items-center justify-center gap-2 shadow-lg"><Icons.Plus /> ADD ENTRY TO LOGS</button>
                         </form>
                     </div>
-                    <JtgPromo />
                 </div>
             );
         };
@@ -445,7 +359,8 @@
                         </div>
                         <div style="background: rgba(255,255,255,0.03); padding: 20px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.05);">
                             <p style="margin: 0; font-size: 12px; color: #94a3b8; text-transform: uppercase; margin-bottom: 5px;">Strategy</p>
-                            <p style="margin: 0; font-size: 18px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 1.5; padding-bottom: 5px;">${trade.strategy || 'Standard'}</p>
+                            <!-- FIXED TEXT CLIPPING: Added Line-Height and Padding -->
+                            <p style="margin: 0; font-size: 18px; font-weight: 700; overflow: hidden; text-overflow: ellipsis; line-height: 1.5; padding-bottom: 10px; display: block;">${trade.strategy || 'Standard'}</p>
                         </div>
                     </div>
 
@@ -547,6 +462,7 @@
                             <StatCard title="Losing Trades" value={stats.loss} color="red" icon={<span className="text-red-500"><Icons.ThumbsDown /></span>} />
                         </div>
                     </div>
+                    <JtgPromo />
                 </div>
             );
         };
